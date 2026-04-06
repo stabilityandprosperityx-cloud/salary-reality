@@ -5,11 +5,19 @@ import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const INLINE_FAVICON_DATA_URI =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJTYWxhcnkgUmVhbGl0eSBmYXZpY29uIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxMiIgZmlsbD0iIzBBMEEwRiIvPjx0ZXh0IHg9IjMyIiB5PSIzOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkludGVyLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIyQzU1RSI+U1I8L3RleHQ+PC9zdmc+";
 
 export const metadata: Metadata = {
   title: "Salary Reality",
   description: "Crowdsourced real salary data by country and profession.",
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: [
+      { url: INLINE_FAVICON_DATA_URI, type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+  },
 };
 
 export const revalidate = 0;
@@ -26,6 +34,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body className={inter.className}>
         <header className="border-b border-white/10 bg-[#12121A]/80 backdrop-blur">
           <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
