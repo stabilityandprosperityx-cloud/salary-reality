@@ -4,6 +4,7 @@ import { countryFlagEmoji } from "@/lib/flags";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
 import { getSupabaseClient } from "@/lib/supabase";
 import { SalaryEntry } from "@/lib/types";
+import Link from "next/link";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -278,9 +279,12 @@ export default async function Home({ searchParams }: Props) {
                 </article>
               ))}
             </div>
-            <div className="glass border border-[#38BDF8]/30 p-4 text-center text-white">
+            <Link
+              href="/submit"
+              className="glass block cursor-pointer border border-[#38BDF8]/30 p-4 text-center text-white transition hover:border-[#38BDF8] hover:bg-[#38BDF8]/10"
+            >
               See all {stats.filteredCount} salaries — Submit yours to unlock
-            </div>
+            </Link>
           </>
         )}
       </section>
