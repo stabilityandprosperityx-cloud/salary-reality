@@ -88,14 +88,18 @@ function employmentCounts(entries: SalaryEntry[]) {
   }));
 }
 
-export function makeDashboardData(allEntries: SalaryEntry[], filteredEntries: SalaryEntry[]): DashboardData {
+export function makeDashboardData(
+  allEntries: SalaryEntry[],
+  filteredEntries: SalaryEntry[],
+  options?: { scopeTotalExact?: number; filteredCountExact?: number },
+): DashboardData {
   const allSalaries = allEntries.map((e) => e.monthly_salary_usd);
   const filteredSalaries = filteredEntries.map((e) => e.monthly_salary_usd);
   const grossSalaries = filteredEntries.filter((e) => e.salary_type === "gross").map((e) => e.monthly_salary_usd);
   const netSalaries = filteredEntries.filter((e) => e.salary_type === "net").map((e) => e.monthly_salary_usd);
 
   return {
-    totalSubmissions: allEntries.length,
+    totalSubmissions: options?.scopeTotalExact ?? allEntries.length,
     countriesCovered: new Set(allEntries.map((e) => e.country)).size,
     professionsCovered: new Set(allEntries.map((e) => e.profession_category)).size,
     allMedianSalary: median(allSalaries),
@@ -104,7 +108,7 @@ export function makeDashboardData(allEntries: SalaryEntry[], filteredEntries: Sa
     filteredMedianSalary: median(filteredSalaries),
     filteredMinSalary: filteredSalaries.length > 0 ? Math.min(...filteredSalaries) : 0,
     filteredMaxSalary: filteredSalaries.length > 0 ? Math.max(...filteredSalaries) : 0,
-    filteredCount: filteredEntries.length,
+    filteredCount: options?.filteredCountExact ?? filteredEntries.length,
     latest20: [...filteredEntries]
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 20),

@@ -15,6 +15,7 @@ export function FilterBar() {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(param, value);
     else params.delete(param);
+    params.delete("page");
     router.replace(`${pathname}?${params.toString()}`);
   }
 

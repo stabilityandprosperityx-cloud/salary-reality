@@ -2,6 +2,7 @@ import { COUNTRIES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, PROFESSION_CATEGORIES, 
 import { getSupabaseClient } from "@/lib/supabase";
 import { createHash } from "crypto";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 function getIpHash() {
@@ -78,6 +79,8 @@ export async function POST(request: Request) {
     if (insertion.error) {
       return NextResponse.json({ error: insertion.error.message }, { status: 500 });
     }
+
+    revalidatePath("/");
 
     const response = NextResponse.json({ ok: true });
     response.cookies.set("salary_contributor", "true", {

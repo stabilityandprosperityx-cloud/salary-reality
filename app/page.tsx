@@ -1,11 +1,16 @@
 import { FilterBar } from "@/app/components/filter-bar";
 import { RefreshLoop } from "@/app/components/refresh-loop";
-import { countryFlagEmoji } from "@/lib/flags";
+import { SalariesSection } from "@/app/components/salaries-section";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
-import { getSupabaseClient } from "@/lib/supabase";
-import { SalaryEntry } from "@/lib/types";
-import { cookies } from "next/headers";
-import Link from "next/link";
+import { ENTRIES_PER_PAGE } from "@/lib/pagination";
+import {
+  SALARY_STATS_FETCH_LIMIT,
+  fetchFilteredEntriesForStats,
+  fetchFilteredEntriesPage,
+  fetchFilteredEntryCount,
+  fetchScopeSalaryEntriesForStats,
+  fetchScopeSalaryEntryCount,
+} from "@/lib/supabase/server";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -15,6 +20,7 @@ type Props = {
     country?: string;
     profession?: string;
     salaryType?: string;
+    page?: string;
   };
 };
 
@@ -40,28 +46,35 @@ function employmentPieBackground(items: { type: string; count: number }[]): stri
 }
 
 export default async function Home({ searchParams }: Props) {
-  const hasContributorCookie = cookies().get("salary_contributor")?.value === "true";
-  const supabase = getSupabaseClient();
-  const result = await supabase
-    .from("salary_entries")
-    .select(
-      "id,country,profession_category,job_title,monthly_salary_usd,salary_type,employment_type,experience_level,note,created_at",
-    )
-    .order("created_at", { ascending: false })
-    .limit(1000);
+  const salaryType: "" | "gross" | "net" =
+    searchParams.salaryType === "gross" || searchParams.salaryType === "net" ? searchParams.salaryType : "";
+  const country = searchParams.country ?? "";
+  const profession = searchParams.profession ?? "";
+  const parsedPage = Number.parseInt(String(searchParams.page ?? "1"), 10);
+  const requestedPage = Number.isFinite(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
 
-  const salaryType = searchParams.salaryType === "gross" || searchParams.salaryType === "net" ? searchParams.salaryType : "";
-  const salaryScopeEntries = ((result.data ?? []) as SalaryEntry[]).filter((item) => {
-    if (!salaryType) return true;
-    return item.salary_type === salaryType;
-  });
+  const [scopeTotal, selectionTotal, scopeRows, filteredRows] = await Promise.all([
+    fetchScopeSalaryEntryCount(salaryType),
+    fetchFilteredEntryCount(salaryType, country, profession),
+    fetchScopeSalaryEntriesForStats(salaryType, SALARY_STATS_FETCH_LIMIT),
+    fetchFilteredEntriesForStats(salaryType, country, profession, SALARY_STATS_FETCH_LIMIT),
+  ]);
 
-  const allEntries = salaryScopeEntries.filter((item) => {
-    if (searchParams.country && item.country !== searchParams.country) return false;
-    if (searchParams.profession && item.profession_category !== searchParams.profession) return false;
-    return true;
+  const totalPages = Math.max(1, Math.ceil(selectionTotal / ENTRIES_PER_PAGE));
+  const currentPage = Math.min(requestedPage, totalPages);
+
+  const pagedEntries = await fetchFilteredEntriesPage(
+    salaryType,
+    country,
+    profession,
+    currentPage,
+    ENTRIES_PER_PAGE,
+  );
+
+  const stats = makeDashboardData(scopeRows, filteredRows, {
+    scopeTotalExact: scopeTotal,
+    filteredCountExact: selectionTotal,
   });
-  const stats = makeDashboardData(salaryScopeEntries, allEntries);
   const maxCountry = Math.max(...stats.topCountries.map((item) => item.value), 1);
   const maxProfession = Math.max(...stats.topProfessions.map((item) => item.value), 1);
   const maxHistogram = Math.max(...stats.histogram.map((item) => item.count), 1);
@@ -72,8 +85,6 @@ export default async function Home({ searchParams }: Props) {
   const maxEmployment = Math.max(...stats.employmentDistribution.map((i) => i.count), 1);
   const employmentPie = employmentPieBackground(stats.employmentDistribution);
   const employmentTotal = stats.employmentDistribution.reduce((s, i) => s + i.count, 0);
-  const gatedRows = hasContributorCookie ? stats.latest20 : stats.latest20.slice(0, 10);
-  const lockedRows = hasContributorCookie ? [] : stats.latest20.slice(10);
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
@@ -256,57 +267,15 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-white">Latest Salaries</h2>
-        {gatedRows.map((entry) => (
-          <article key={entry.id} className="glass p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-lg font-medium text-white">
-                <span className="mr-2">{countryFlagEmoji(entry.country)}</span>
-                {entry.profession_category} - {entry.job_title}
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs uppercase text-white/80">
-                  {entry.salary_type}
-                </span>
-                <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
-              </div>
-            </div>
-            <p className="mt-2 text-sm text-white/70">
-              {entry.country} • {entry.employment_type} • {entry.experience_level} •{" "}
-              {new Date(entry.created_at).toLocaleDateString()}
-            </p>
-          </article>
-        ))}
-        {lockedRows.length > 0 && (
-          <>
-            <div className="space-y-3 blur-[3px] opacity-70">
-              {lockedRows.map((entry) => (
-                <article key={entry.id} className="glass p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-lg font-medium text-white">
-                      <span className="mr-2">{countryFlagEmoji(entry.country)}</span>
-                      {entry.profession_category} - {entry.job_title}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs uppercase text-white/80">
-                        {entry.salary_type}
-                      </span>
-                      <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <Link
-              href="/submit"
-              className="glass block cursor-pointer border border-[#38BDF8]/30 p-4 text-center text-white transition hover:border-[#38BDF8] hover:bg-[#38BDF8]/10"
-            >
-              See all {stats.filteredCount} salaries — Submit yours to unlock
-            </Link>
-          </>
-        )}
-      </section>
+      <SalariesSection
+        entries={pagedEntries}
+        totalCount={selectionTotal}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        country={country}
+        profession={profession}
+        salaryType={salaryType}
+      />
 
       <section className="glass border border-[#38BDF8]/30 p-4 text-center">
         <p className="text-white">
