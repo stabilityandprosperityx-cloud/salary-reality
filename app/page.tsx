@@ -1,6 +1,6 @@
 import { FilterBar } from "@/app/components/filter-bar";
 import { RefreshLoop } from "@/app/components/refresh-loop";
-import { COUNTRIES, PROFESSION_CATEGORIES } from "@/lib/constants";
+import { countryFlagEmoji } from "@/lib/flags";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
 import { getSupabaseClient } from "@/lib/supabase";
 import { SalaryEntry } from "@/lib/types";
@@ -15,70 +15,25 @@ type Props = {
   };
 };
 
-function countryFlagEmoji(countryName: string): string {
-  const REGION_CODES: Record<string, string> = {
-    Argentina: "AR",
-    Australia: "AU",
-    Austria: "AT",
-    Belgium: "BE",
-    Brazil: "BR",
-    Bulgaria: "BG",
-    Canada: "CA",
-    Chile: "CL",
-    China: "CN",
-    Colombia: "CO",
-    Croatia: "HR",
-    "Czech Republic": "CZ",
-    Denmark: "DK",
-    Egypt: "EG",
-    Estonia: "EE",
-    Finland: "FI",
-    France: "FR",
-    Germany: "DE",
-    Greece: "GR",
-    "Hong Kong": "HK",
-    Hungary: "HU",
-    India: "IN",
-    Indonesia: "ID",
-    Ireland: "IE",
-    Israel: "IL",
-    Italy: "IT",
-    Japan: "JP",
-    Kenya: "KE",
-    Malaysia: "MY",
-    Mexico: "MX",
-    Morocco: "MA",
-    Netherlands: "NL",
-    "New Zealand": "NZ",
-    Nigeria: "NG",
-    Norway: "NO",
-    Pakistan: "PK",
-    Peru: "PE",
-    Philippines: "PH",
-    Poland: "PL",
-    Portugal: "PT",
-    Romania: "RO",
-    "Saudi Arabia": "SA",
-    Serbia: "RS",
-    Singapore: "SG",
-    "South Africa": "ZA",
-    "South Korea": "KR",
-    Spain: "ES",
-    Sweden: "SE",
-    Switzerland: "CH",
-    Thailand: "TH",
-    Turkey: "TR",
-    Ukraine: "UA",
-    "United Arab Emirates": "AE",
-    "United Kingdom": "GB",
-    "United States": "US",
-    Uruguay: "UY",
-    Vietnam: "VN",
-  };
+const EMPLOYMENT_CHART_COLORS: Record<string, string> = {
+  Remote: "#38BDF8",
+  Local: "#22d3ee",
+  Hybrid: "#a78bfa",
+};
 
-  const code = REGION_CODES[countryName];
-  if (!code) return "🌍";
-  return String.fromCodePoint(...code.split("").map((c) => 127397 + c.charCodeAt(0)));
+function employmentPieBackground(items: { type: string; count: number }[]): string | null {
+  const total = items.reduce((sum, i) => sum + i.count, 0);
+  if (total === 0) return null;
+  let acc = 0;
+  const stops: string[] = [];
+  for (const item of items) {
+    const start = (acc / total) * 360;
+    acc += item.count;
+    const end = (acc / total) * 360;
+    const color = EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b";
+    stops.push(`${color} ${start}deg ${end}deg`);
+  }
+  return `conic-gradient(${stops.join(", ")})`;
 }
 
 export default async function Home({ searchParams }: Props) {
@@ -101,6 +56,13 @@ export default async function Home({ searchParams }: Props) {
   const maxCountry = Math.max(...stats.topCountries.map((item) => item.value), 1);
   const maxProfession = Math.max(...stats.topProfessions.map((item) => item.value), 1);
   const maxHistogram = Math.max(...stats.histogram.map((item) => item.count), 1);
+  const maxExpMedian = Math.max(
+    ...stats.medianByExperience.filter((r) => r.count > 0).map((r) => r.median),
+    1,
+  );
+  const maxEmployment = Math.max(...stats.employmentDistribution.map((i) => i.count), 1);
+  const employmentPie = employmentPieBackground(stats.employmentDistribution);
+  const employmentTotal = stats.employmentDistribution.reduce((s, i) => s + i.count, 0);
   const gatedRows = stats.latest20.slice(0, 10);
   const lockedRows = stats.latest20.slice(10);
 
@@ -136,7 +98,7 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </section>
 
-      <FilterBar countries={COUNTRIES} professions={PROFESSION_CATEGORIES} />
+      <FilterBar />
 
       <section className="grid gap-3 md:grid-cols-3">
         <div className="glass p-4">
@@ -212,6 +174,78 @@ export default async function Home({ searchParams }: Props) {
         </div>
       </section>
 
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="glass p-4">
+          <h2 className="mb-3 text-lg font-semibold text-white">Median Salary by Experience Level</h2>
+          <div className="space-y-3">
+            {stats.medianByExperience.map((row) => (
+              <div key={row.fullLabel}>
+                <div className="mb-1 flex justify-between text-xs text-white/70">
+                  <span title={row.fullLabel}>
+                    {row.shortLabel}
+                    {row.count === 0 ? <span className="text-white/40"> (no data)</span> : null}
+                  </span>
+                  <span>{row.count > 0 ? formatUsd(row.median) : "—"}</span>
+                </div>
+                <div className="h-2 rounded bg-white/10">
+                  <div
+                    className="h-2 rounded bg-[#38BDF8]"
+                    style={{
+                      width: row.count > 0 ? `${(row.median / maxExpMedian) * 100}%` : "0%",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="glass p-4">
+          <h2 className="mb-3 text-lg font-semibold text-white">Remote vs Local vs Hybrid</h2>
+          {employmentTotal === 0 ? (
+            <p className="text-sm text-white/60">No submissions in this selection yet.</p>
+          ) : (
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-center">
+              <div
+                className="h-40 w-40 shrink-0 rounded-full border border-white/10 shadow-inner"
+                style={{ background: employmentPie ?? undefined }}
+                role="img"
+                aria-label="Employment type distribution"
+              />
+              <div className="w-full max-w-xs space-y-2">
+                {stats.employmentDistribution.map((item) => {
+                  const pct = employmentTotal > 0 ? Math.round((item.count / employmentTotal) * 100) : 0;
+                  return (
+                    <div key={item.type}>
+                      <div className="mb-1 flex justify-between text-xs text-white/70">
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block h-2 w-2 rounded-full"
+                            style={{ backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b" }}
+                          />
+                          {item.type}
+                        </span>
+                        <span>
+                          {item.count} ({pct}%)
+                        </span>
+                      </div>
+                      <div className="h-2 rounded bg-white/10">
+                        <div
+                          className="h-2 rounded"
+                          style={{
+                            width: `${(item.count / maxEmployment) * 100}%`,
+                            backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-xl font-semibold text-white">Latest Salaries</h2>
         {gatedRows.map((entry) => (
@@ -254,7 +288,7 @@ export default async function Home({ searchParams }: Props) {
       <section className="glass border border-[#38BDF8]/30 p-4 text-center">
         <p className="text-white">
           Planning to relocate?{" "}
-          <a href="https://relova.co" target="_blank" rel="noreferrer" className="font-semibold text-[#38BDF8]">
+          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-[#38BDF8]">
             Get your personalized plan at Relova →
           </a>
         </p>

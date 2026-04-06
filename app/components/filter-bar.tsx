@@ -1,13 +1,9 @@
 "use client";
 
+import { COUNTRIES, PROFESSION_CATEGORIES } from "@/lib/constants";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-type Props = {
-  countries: readonly string[];
-  professions: readonly string[];
-};
-
-export function FilterBar({ countries, professions }: Props) {
+export function FilterBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,7 +27,7 @@ export function FilterBar({ countries, professions }: Props) {
           onChange={(e) => updateParam("country", e.target.value)}
         >
           <option value="">All countries</option>
-          {countries.map((item) => (
+          {COUNTRIES.map((item) => (
             <option key={item} value={item}>
               {item}
             </option>
@@ -46,7 +42,7 @@ export function FilterBar({ countries, professions }: Props) {
           onChange={(e) => updateParam("profession", e.target.value)}
         >
           <option value="">All categories</option>
-          {professions.map((item) => (
+          {PROFESSION_CATEGORIES.map((item) => (
             <option key={item} value={item}>
               {item}
             </option>

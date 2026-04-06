@@ -1,4 +1,12 @@
+import { EMPLOYMENT_TYPES, EXPERIENCE_LEVELS } from "@/lib/constants";
 import { SalaryEntry } from "@/lib/types";
+
+const EXPERIENCE_CHART_LABELS: Record<(typeof EXPERIENCE_LEVELS)[number], string> = {
+  "Junior (0-2yr)": "Junior",
+  "Mid (2-5yr)": "Mid",
+  "Senior (5-10yr)": "Senior",
+  "Lead/Principal (10yr+)": "Lead",
+};
 
 export type DashboardData = {
   totalSubmissions: number;
@@ -13,6 +21,8 @@ export type DashboardData = {
   topCountries: { name: string; value: number }[];
   topProfessions: { name: string; value: number }[];
   histogram: { label: string; count: number }[];
+  medianByExperience: { shortLabel: string; fullLabel: string; median: number; count: number }[];
+  employmentDistribution: { type: string; count: number }[];
 };
 
 const HISTOGRAM_BUCKETS = [0, 1000, 2000, 3000, 5000, 7000, 10000, 15000, Number.POSITIVE_INFINITY];
@@ -57,6 +67,25 @@ function topBy<T>(entries: SalaryEntry[], key: (item: SalaryEntry) => T, limit =
     .slice(0, limit);
 }
 
+function medianByExperienceLevel(entries: SalaryEntry[]) {
+  return EXPERIENCE_LEVELS.map((level) => {
+    const salaries = entries.filter((e) => e.experience_level === level).map((e) => e.monthly_salary_usd);
+    return {
+      shortLabel: EXPERIENCE_CHART_LABELS[level],
+      fullLabel: level,
+      median: median(salaries),
+      count: salaries.length,
+    };
+  });
+}
+
+function employmentCounts(entries: SalaryEntry[]) {
+  return EMPLOYMENT_TYPES.map((type) => ({
+    type,
+    count: entries.filter((e) => e.employment_type === type).length,
+  }));
+}
+
 export function makeDashboardData(allEntries: SalaryEntry[], filteredEntries: SalaryEntry[]): DashboardData {
   const allSalaries = allEntries.map((e) => e.monthly_salary_usd);
   const filteredSalaries = filteredEntries.map((e) => e.monthly_salary_usd);
@@ -76,6 +105,8 @@ export function makeDashboardData(allEntries: SalaryEntry[], filteredEntries: Sa
     topCountries: topBy(filteredEntries, (e) => e.country),
     topProfessions: topBy(filteredEntries, (e) => e.profession_category),
     histogram: toHistogram(filteredEntries),
+    medianByExperience: medianByExperienceLevel(filteredEntries),
+    employmentDistribution: employmentCounts(filteredEntries),
   };
 }
 
