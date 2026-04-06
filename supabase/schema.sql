@@ -6,6 +6,7 @@ create table if not exists public.salary_entries (
   profession_category text not null,
   job_title text not null,
   monthly_salary_usd integer not null,
+  salary_type text not null default 'gross',
   employment_type text not null,
   experience_level text not null,
   note text null,

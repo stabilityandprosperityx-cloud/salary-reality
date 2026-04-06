@@ -14,6 +14,7 @@ type Props = {
   searchParams: {
     country?: string;
     profession?: string;
+    salaryType?: string;
   };
 };
 
@@ -44,18 +45,23 @@ export default async function Home({ searchParams }: Props) {
   const result = await supabase
     .from("salary_entries")
     .select(
-      "id,country,profession_category,job_title,monthly_salary_usd,employment_type,experience_level,note,created_at",
+      "id,country,profession_category,job_title,monthly_salary_usd,salary_type,employment_type,experience_level,note,created_at",
     )
     .order("created_at", { ascending: false })
     .limit(1000);
 
-  const allEntries = ((result.data ?? []) as SalaryEntry[]).filter((item) => {
+  const salaryType = searchParams.salaryType === "gross" || searchParams.salaryType === "net" ? searchParams.salaryType : "";
+  const salaryScopeEntries = ((result.data ?? []) as SalaryEntry[]).filter((item) => {
+    if (!salaryType) return true;
+    return item.salary_type === salaryType;
+  });
+
+  const allEntries = salaryScopeEntries.filter((item) => {
     if (searchParams.country && item.country !== searchParams.country) return false;
     if (searchParams.profession && item.profession_category !== searchParams.profession) return false;
     return true;
   });
-  const unfilteredEntries = (result.data ?? []) as SalaryEntry[];
-  const stats = makeDashboardData(unfilteredEntries, allEntries);
+  const stats = makeDashboardData(salaryScopeEntries, allEntries);
   const maxCountry = Math.max(...stats.topCountries.map((item) => item.value), 1);
   const maxProfession = Math.max(...stats.topProfessions.map((item) => item.value), 1);
   const maxHistogram = Math.max(...stats.histogram.map((item) => item.count), 1);
@@ -96,8 +102,9 @@ export default async function Home({ searchParams }: Props) {
           <p className="text-xl font-semibold text-white">{stats.professionsCovered}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Median salary (all)</p>
-          <p className="text-xl font-semibold text-white">{formatUsd(stats.allMedianSalary)}</p>
+          <p className="text-sm text-white/60">Median gross / net</p>
+          <p className="text-sm text-white/90">Median gross: {stats.medianGrossSalary > 0 ? formatUsd(stats.medianGrossSalary) : "—"}</p>
+          <p className="text-sm text-white/90">Median net: {stats.medianNetSalary > 0 ? formatUsd(stats.medianNetSalary) : "—"}</p>
         </div>
       </section>
 
@@ -258,7 +265,12 @@ export default async function Home({ searchParams }: Props) {
                 <span className="mr-2">{countryFlagEmoji(entry.country)}</span>
                 {entry.profession_category} - {entry.job_title}
               </p>
-              <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs uppercase text-white/80">
+                  {entry.salary_type}
+                </span>
+                <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
+              </div>
             </div>
             <p className="mt-2 text-sm text-white/70">
               {entry.country} • {entry.employment_type} • {entry.experience_level} •{" "}
@@ -276,7 +288,12 @@ export default async function Home({ searchParams }: Props) {
                       <span className="mr-2">{countryFlagEmoji(entry.country)}</span>
                       {entry.profession_category} - {entry.job_title}
                     </p>
-                    <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs uppercase text-white/80">
+                        {entry.salary_type}
+                      </span>
+                      <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
+                    </div>
                   </div>
                 </article>
               ))}

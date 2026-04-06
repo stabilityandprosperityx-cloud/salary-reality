@@ -27,6 +27,7 @@ export const EXPERIENCE_LEVELS = [
 ] as const;
 
 export const EMPLOYMENT_TYPES = ["Remote", "Local", "Hybrid"] as const;
+export const SALARY_TYPES = ["gross", "net"] as const;
 
 /** Same alphabetical list as VisaPulse (`visapulse/lib/constants.ts`). */
 export const COUNTRIES = [

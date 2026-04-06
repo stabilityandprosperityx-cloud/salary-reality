@@ -1,4 +1,4 @@
-import { COUNTRIES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, PROFESSION_CATEGORIES } from "@/lib/constants";
+import { COUNTRIES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, PROFESSION_CATEGORIES, SALARY_TYPES } from "@/lib/constants";
 import { getSupabaseClient } from "@/lib/supabase";
 import { createHash } from "crypto";
 import { headers } from "next/headers";
@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       professionCategory?: string;
       jobTitle?: string;
       monthlySalaryUsd?: number;
+      salaryType?: string;
       employmentType?: string;
       experienceLevel?: string;
       note?: string;
@@ -33,6 +34,8 @@ export async function POST(request: Request) {
       body.jobTitle.length > 60 ||
       !Number.isFinite(body.monthlySalaryUsd) ||
       Number(body.monthlySalaryUsd) < 1 ||
+      !body.salaryType ||
+      !SALARY_TYPES.includes(body.salaryType as (typeof SALARY_TYPES)[number]) ||
       !body.employmentType ||
       !EMPLOYMENT_TYPES.includes(body.employmentType as (typeof EMPLOYMENT_TYPES)[number]) ||
       !body.experienceLevel ||
@@ -65,6 +68,7 @@ export async function POST(request: Request) {
       profession_category: body.professionCategory,
       job_title: body.jobTitle.trim(),
       monthly_salary_usd: Math.round(Number(body.monthlySalaryUsd)),
+      salary_type: body.salaryType,
       employment_type: body.employmentType,
       experience_level: body.experienceLevel,
       note: body.note?.trim() || null,

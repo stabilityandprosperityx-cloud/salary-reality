@@ -1,6 +1,6 @@
 "use client";
 
-import { COUNTRIES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, PROFESSION_CATEGORIES } from "@/lib/constants";
+import { COUNTRIES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, PROFESSION_CATEGORIES, SALARY_TYPES } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -9,6 +9,7 @@ export function SubmitForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [employmentType, setEmploymentType] = useState<(typeof EMPLOYMENT_TYPES)[number]>("Remote");
+  const [salaryType, setSalaryType] = useState<(typeof SALARY_TYPES)[number]>("gross");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,6 +22,7 @@ export function SubmitForm() {
       professionCategory: String(formData.get("professionCategory") ?? ""),
       jobTitle: String(formData.get("jobTitle") ?? ""),
       monthlySalaryUsd: Number(formData.get("monthlySalaryUsd") ?? 0),
+      salaryType,
       employmentType,
       experienceLevel: String(formData.get("experienceLevel") ?? ""),
       note: String(formData.get("note") ?? ""),
@@ -107,6 +109,23 @@ export function SubmitForm() {
           placeholder="e.g. 4500"
         />
       </label>
+
+      <fieldset className="rounded-md border border-white/10 p-3">
+        <legend className="px-1 text-sm text-white/80">Is this gross or net salary?</legend>
+        <div className="mt-2 flex flex-wrap gap-4">
+          {SALARY_TYPES.map((type) => (
+            <label key={type} className="flex items-center gap-2 text-sm text-white/90">
+              <input
+                type="radio"
+                name="salaryType"
+                checked={salaryType === type}
+                onChange={() => setSalaryType(type)}
+              />
+              {type === "gross" ? "Gross (before tax)" : "Net (after tax)"}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <fieldset className="rounded-md border border-white/10 p-3">
         <legend className="px-1 text-sm text-white/80">Employment Type</legend>

@@ -13,6 +13,8 @@ export type DashboardData = {
   countriesCovered: number;
   professionsCovered: number;
   allMedianSalary: number;
+  medianGrossSalary: number;
+  medianNetSalary: number;
   filteredMedianSalary: number;
   filteredMinSalary: number;
   filteredMaxSalary: number;
@@ -89,12 +91,16 @@ function employmentCounts(entries: SalaryEntry[]) {
 export function makeDashboardData(allEntries: SalaryEntry[], filteredEntries: SalaryEntry[]): DashboardData {
   const allSalaries = allEntries.map((e) => e.monthly_salary_usd);
   const filteredSalaries = filteredEntries.map((e) => e.monthly_salary_usd);
+  const grossSalaries = filteredEntries.filter((e) => e.salary_type === "gross").map((e) => e.monthly_salary_usd);
+  const netSalaries = filteredEntries.filter((e) => e.salary_type === "net").map((e) => e.monthly_salary_usd);
 
   return {
     totalSubmissions: allEntries.length,
     countriesCovered: new Set(allEntries.map((e) => e.country)).size,
     professionsCovered: new Set(allEntries.map((e) => e.profession_category)).size,
     allMedianSalary: median(allSalaries),
+    medianGrossSalary: median(grossSalaries),
+    medianNetSalary: median(netSalaries),
     filteredMedianSalary: median(filteredSalaries),
     filteredMinSalary: filteredSalaries.length > 0 ? Math.min(...filteredSalaries) : 0,
     filteredMaxSalary: filteredSalaries.length > 0 ? Math.max(...filteredSalaries) : 0,
