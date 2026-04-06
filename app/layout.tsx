@@ -34,11 +34,11 @@ export default async function RootLayout({
             <div className="flex items-center gap-4">
               <p className="text-sm text-white/60">
                 <span aria-hidden>👥</span>{" "}
-                <span className="font-semibold text-[#38BDF8]">{totalShared}</span> people sharing salaries
+                <span className="font-semibold text-[#22C55E]">{totalShared}</span> people sharing salaries
               </p>
               <Link
                 href="/submit"
-                className="rounded-md bg-[#38BDF8] px-4 py-2 text-sm font-medium text-[#0A0A0F] transition hover:bg-sky-300"
+                className="rounded-md bg-[#22C55E] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#16A34A]"
               >
                 Submit Your Salary
               </Link>
