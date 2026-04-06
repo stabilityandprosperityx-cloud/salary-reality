@@ -75,7 +75,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: insertion.error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true });
+    response.cookies.set("salary_contributor", "true", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+
+    return response;
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }

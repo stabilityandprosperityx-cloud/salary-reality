@@ -4,6 +4,7 @@ import { countryFlagEmoji } from "@/lib/flags";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
 import { getSupabaseClient } from "@/lib/supabase";
 import { SalaryEntry } from "@/lib/types";
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 export const revalidate = 0;
@@ -38,6 +39,7 @@ function employmentPieBackground(items: { type: string; count: number }[]): stri
 }
 
 export default async function Home({ searchParams }: Props) {
+  const hasContributorCookie = cookies().get("salary_contributor")?.value === "true";
   const supabase = getSupabaseClient();
   const result = await supabase
     .from("salary_entries")
@@ -64,8 +66,8 @@ export default async function Home({ searchParams }: Props) {
   const maxEmployment = Math.max(...stats.employmentDistribution.map((i) => i.count), 1);
   const employmentPie = employmentPieBackground(stats.employmentDistribution);
   const employmentTotal = stats.employmentDistribution.reduce((s, i) => s + i.count, 0);
-  const gatedRows = stats.latest20.slice(0, 10);
-  const lockedRows = stats.latest20.slice(10);
+  const gatedRows = hasContributorCookie ? stats.latest20 : stats.latest20.slice(0, 10);
+  const lockedRows = hasContributorCookie ? [] : stats.latest20.slice(10);
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
