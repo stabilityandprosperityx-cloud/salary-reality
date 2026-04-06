@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Salary Reality",
   description: "Crowdsourced real salary data by country and profession.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export const revalidate = 0;
