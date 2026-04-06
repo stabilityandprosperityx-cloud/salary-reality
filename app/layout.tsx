@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getSupabaseClient } from "@/lib/supabase";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -10,11 +11,18 @@ export const metadata: Metadata = {
   description: "Crowdsourced real salary data by country and profession.",
 };
 
-export default function RootLayout({
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = getSupabaseClient();
+  const countResult = await supabase.from("salary_entries").select("id", { count: "exact", head: true });
+  const totalShared = countResult.error ? 0 : (countResult.count ?? 0);
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -23,12 +31,18 @@ export default function RootLayout({
             <Link href="/" className="text-xl font-semibold tracking-tight text-white">
               Salary Reality <span className="text-sm font-normal text-white/60">by Relova</span>
             </Link>
-            <Link
-              href="/submit"
-              className="rounded-md bg-[#38BDF8] px-4 py-2 text-sm font-medium text-[#0A0A0F] transition hover:bg-sky-300"
-            >
-              Submit Your Salary
-            </Link>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-white/60">
+                <span aria-hidden>👥</span>{" "}
+                <span className="font-semibold text-[#38BDF8]">{totalShared}</span> people sharing salaries
+              </p>
+              <Link
+                href="/submit"
+                className="rounded-md bg-[#38BDF8] px-4 py-2 text-sm font-medium text-[#0A0A0F] transition hover:bg-sky-300"
+              >
+                Submit Your Salary
+              </Link>
+            </div>
           </div>
         </header>
         {children}
