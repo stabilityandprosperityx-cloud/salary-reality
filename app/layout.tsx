@@ -9,6 +9,7 @@ const INLINE_FAVICON_DATA_URI =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJTYWxhcnkgUmVhbGl0eSBmYXZpY29uIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxMiIgZmlsbD0iIzBBMEEwRiIvPjx0ZXh0IHg9IjMyIiB5PSIzOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkludGVyLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIyQzU1RSI+U1I8L3RleHQ+PC9zdmc+";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://salary.relova.ai"),
   title: "Salary Reality",
   description: "Crowdsourced real salary data by country and profession.",
   icons: {
@@ -43,7 +44,10 @@ export default async function RootLayout({
             <Link href="/" className="text-xl font-semibold tracking-tight text-white">
               Salary Reality <span className="text-sm font-normal text-white/60">by Relova</span>
             </Link>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <Link href="/blog" className="text-sm font-medium text-white/80 hover:text-[#38BDF8]">
+                Blog
+              </Link>
               <p className="text-sm text-white/60">
                 <span aria-hidden>👥</span>{" "}
                 <span className="font-semibold text-[#22C55E]">{totalShared}</span> people sharing salaries
