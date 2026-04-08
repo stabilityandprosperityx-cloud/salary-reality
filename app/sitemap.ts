@@ -1,4 +1,5 @@
 import { getAllPostsMeta, SITE_URL } from "@/lib/blog";
+import { COUNTRIES, PROFESSIONS, toSlug } from "@/lib/slugs";
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -8,6 +9,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.85,
   }));
+  const countryPages = COUNTRIES.map((c) => ({
+    url: `${SITE_URL}/${toSlug(c)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.85,
+  }));
+  const countryProfessionPages = COUNTRIES.flatMap((c) =>
+    PROFESSIONS.map((p) => ({
+      url: `${SITE_URL}/${toSlug(c)}/${toSlug(p)}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    })),
+  );
 
   return [
     {
@@ -28,6 +43,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.95,
     },
+    ...countryPages,
+    ...countryProfessionPages,
     ...posts,
   ];
 }
