@@ -22,8 +22,8 @@ export function FilterBar() {
   return (
     <div className="glass grid gap-3 p-4 md:grid-cols-2">
       <div className="md:col-span-2">
-        <p className="mb-1 text-sm text-white/80">Gross / Net</p>
-        <div className="inline-flex overflow-hidden rounded-md border border-white/10">
+        <p className="mb-1 text-sm text-muted-foreground">Gross / Net</p>
+        <div className="inline-flex overflow-hidden rounded-md border border-border">
           {[
             { id: "", label: "All" },
             { id: "gross", label: "Gross" },
@@ -36,7 +36,9 @@ export function FilterBar() {
                 type="button"
                 onClick={() => updateParam("salaryType", option.id)}
                 className={`px-3 py-1.5 text-sm transition ${
-                  active ? "bg-[#38BDF8] text-[#0A0A0F]" : "bg-[#0A0A0F] text-white/80 hover:bg-white/10"
+                  active
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background text-muted-foreground hover:bg-muted"
                 }`}
               >
                 {option.label}
@@ -45,10 +47,10 @@ export function FilterBar() {
           })}
         </div>
       </div>
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Country
         <select
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           value={country}
           onChange={(e) => updateParam("country", e.target.value)}
         >
@@ -60,10 +62,10 @@ export function FilterBar() {
           ))}
         </select>
       </label>
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Profession category
         <select
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           value={profession}
           onChange={(e) => updateParam("profession", e.target.value)}
         >

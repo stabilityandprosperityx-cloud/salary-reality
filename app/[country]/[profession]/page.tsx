@@ -16,9 +16,9 @@ type Props = {
 };
 
 const EMPLOYMENT_CHART_COLORS: Record<string, string> = {
-  Remote: "#38BDF8",
-  Local: "#22d3ee",
-  Hybrid: "#a78bfa",
+  Remote: "hsl(245 78% 62%)",
+  Local: "hsl(168 55% 40%)",
+  Hybrid: "hsl(280 70% 55%)",
 };
 
 export const revalidate = 3600;
@@ -71,53 +71,53 @@ export default async function CountryProfessionPage({ params }: Props) {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <div className="flex flex-wrap gap-4 text-sm">
-        <Link href="/" className="text-[#38BDF8] hover:text-[#7DD3FC]">
+        <Link href="/" className="text-primary hover:text-primary/80">
           ← All countries
         </Link>
-        <Link href={`/${params.country}`} className="text-[#38BDF8] hover:text-[#7DD3FC]">
+        <Link href={`/${params.country}`} className="text-primary hover:text-primary/80">
           ← {countryName}
         </Link>
       </div>
 
       <section className="glass p-6">
-        <h1 className="text-4xl font-semibold tracking-tight text-white">
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground">
           {professionName} Salaries in {countryName}
         </h1>
-        <p className="mt-2 text-white/70">Based on {count} anonymously submitted salaries</p>
+        <p className="mt-2 text-muted-foreground">Based on {count} anonymously submitted salaries</p>
       </section>
 
       <section className="grid gap-3 md:grid-cols-3">
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Median Salary</p>
-          <p className="text-3xl font-semibold text-[#38BDF8]">{formatUsd(stats.filteredMedianSalary)}</p>
+          <p className="text-sm text-muted-foreground">Median Salary</p>
+          <p className="text-3xl font-semibold text-primary">{formatUsd(stats.filteredMedianSalary)}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Salary Range</p>
-          <p className="text-2xl font-semibold text-white">
+          <p className="text-sm text-muted-foreground">Salary Range</p>
+          <p className="text-2xl font-semibold text-foreground">
             {formatUsd(stats.filteredMinSalary)} - {formatUsd(stats.filteredMaxSalary)}
           </p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Total Submissions</p>
-          <p className="text-2xl font-semibold text-white">{stats.filteredCount}</p>
+          <p className="text-sm text-muted-foreground">Total Submissions</p>
+          <p className="text-2xl font-semibold text-foreground">{stats.filteredCount}</p>
         </div>
       </section>
 
       <section className="glass p-4">
-        <h2 className="mb-3 text-lg font-semibold text-white">By Experience Level</h2>
+        <h2 className="mb-3 text-lg font-semibold text-foreground">By Experience Level</h2>
         <div className="space-y-3">
           {stats.medianByExperience.map((row) => (
             <div key={row.fullLabel}>
-              <div className="mb-1 flex justify-between text-xs text-white/70">
+              <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                 <span title={row.fullLabel}>
                   {row.shortLabel}
-                  {row.count === 0 ? <span className="text-white/40"> (no data)</span> : null}
+                  {row.count === 0 ? <span className="text-muted-foreground/60"> (no data)</span> : null}
                 </span>
                 <span>{row.count > 0 ? formatUsd(row.median) : "—"}</span>
               </div>
-              <div className="h-2 rounded bg-white/10">
+              <div className="h-2 rounded bg-muted">
                 <div
-                  className="h-2 rounded bg-[#38BDF8]"
+                  className="h-2 rounded bg-primary"
                   style={{ width: row.count > 0 ? `${(row.median / maxExpMedian) * 100}%` : "0%" }}
                 />
               </div>
@@ -127,20 +127,20 @@ export default async function CountryProfessionPage({ params }: Props) {
       </section>
 
       <section className="glass p-4">
-        <h2 className="mb-3 text-lg font-semibold text-white">Remote vs Local vs Hybrid</h2>
+        <h2 className="mb-3 text-lg font-semibold text-foreground">Remote vs Local vs Hybrid</h2>
         <div className="space-y-2">
           {stats.employmentDistribution.map((item) => (
             <div key={item.type}>
-              <div className="mb-1 flex justify-between text-xs text-white/70">
+              <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                 <span>{item.type}</span>
                 <span>{item.count}</span>
               </div>
-              <div className="h-2 rounded bg-white/10">
+              <div className="h-2 rounded bg-muted">
                 <div
                   className="h-2 rounded"
                   style={{
                     width: `${(item.count / maxEmployment) * 100}%`,
-                    backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b",
+                    backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "hsl(220 8% 52%)",
                   }}
                 />
               </div>
@@ -150,18 +150,18 @@ export default async function CountryProfessionPage({ params }: Props) {
       </section>
 
       <section className="glass p-4">
-        <h2 className="mb-3 text-lg font-semibold text-white">Recent Salaries</h2>
+        <h2 className="mb-3 text-lg font-semibold text-foreground">Recent Salaries</h2>
         <div className="space-y-3">
           {latest.map((entry) => (
-            <article key={entry.id} className="rounded-md border border-white/10 bg-black/20 p-4">
+            <article key={entry.id} className="rounded-md border border-border bg-secondary/60 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-lg font-medium text-white">
+                <p className="text-lg font-medium text-foreground">
                   <span className="mr-2">{countryFlagEmoji(entry.country)}</span>
                   {entry.country} - {entry.job_title}
                 </p>
-                <p className="text-lg font-semibold text-[#38BDF8]">{formatUsd(entry.monthly_salary_usd)}/month</p>
+                <p className="text-lg font-semibold text-primary">{formatUsd(entry.monthly_salary_usd)}/month</p>
               </div>
-              <p className="mt-2 text-sm text-white/70">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {entry.profession_category} • {entry.employment_type} • {entry.experience_level}
               </p>
             </article>
@@ -170,13 +170,13 @@ export default async function CountryProfessionPage({ params }: Props) {
       </section>
 
       <section className="glass p-4">
-        <h2 className="mb-3 text-lg font-semibold text-white">Other professions in {countryName}</h2>
+        <h2 className="mb-3 text-lg font-semibold text-foreground">Other professions in {countryName}</h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {PROFESSIONS.map((profession) => (
             <Link
               key={profession}
               href={`/${params.country}/${toSlug(profession)}`}
-              className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/85 transition hover:border-[#38BDF8]/50 hover:text-[#38BDF8]"
+              className="rounded-md border border-border bg-secondary px-3 py-2 text-sm text-foreground/85 transition hover:border-primary/50 hover:text-primary"
             >
               {profession}
             </Link>
@@ -184,10 +184,10 @@ export default async function CountryProfessionPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="glass border border-[#38BDF8]/30 p-4 text-center">
-        <p className="text-white">
+      <section className="glass border border-primary/30 p-4 text-center">
+        <p className="text-foreground">
           Planning to relocate?{" "}
-          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-[#38BDF8]">
+          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-primary">
             Get your personalized plan at Relova →
           </a>
         </p>

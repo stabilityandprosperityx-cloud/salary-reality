@@ -58,13 +58,13 @@ export default function BlogPostPage({ params }: Props) {
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10">
-      <header className="border-b border-white/10 pb-8">
-        <Link href="/blog" className="text-sm font-medium text-[#38BDF8] hover:underline">
+      <header className="border-b border-border pb-8">
+        <Link href="/blog" className="text-sm font-medium text-primary hover:underline">
           ← All posts
         </Link>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">{meta.title}</h1>
-        <p className="mt-3 text-lg text-white/70">{meta.description}</p>
-        <p className="mt-4 text-sm text-white/50">
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">{meta.title}</h1>
+        <p className="mt-3 text-lg text-muted-foreground">{meta.description}</p>
+        <p className="mt-4 text-sm text-muted-foreground">
           <time dateTime={meta.date}>
             {new Date(meta.date).toLocaleDateString("en-US", {
               year: "numeric",
@@ -77,7 +77,7 @@ export default function BlogPostPage({ params }: Props) {
         </p>
       </header>
       <div
-        className="prose prose-invert prose-lg mt-10 max-w-none prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80 prose-strong:text-white prose-a:text-[#38BDF8] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-[#38BDF8] prose-blockquote:text-white/70 prose-code:rounded prose-code:bg-white/10 prose-code:px-1 prose-code:text-[#38BDF8] prose-pre:bg-[#12121A] prose-pre:border prose-pre:border-white/10 prose-th:border-white/20 prose-th:bg-white/5 prose-th:text-white prose-td:border-white/10 prose-td:text-white/80"
+        className="prose prose-lg mt-10 max-w-none prose-headings:scroll-mt-24 prose-headings:font-serif prose-headings:font-semibold prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-primary prose-blockquote:text-muted-foreground prose-code:rounded prose-code:bg-muted prose-code:px-1 prose-code:text-primary prose-pre:bg-card prose-pre:border prose-pre:border-border prose-th:border-border prose-th:bg-secondary prose-th:text-foreground prose-td:border-border prose-td:text-muted-foreground"
       >
         <MDXRemote
           source={content}
@@ -88,10 +88,10 @@ export default function BlogPostPage({ params }: Props) {
           }}
         />
       </div>
-      <footer className="mt-12 rounded-xl border border-[#38BDF8]/30 bg-[#12121A] p-6 text-center">
-        <p className="text-lg text-white">
+      <footer className="mt-12 rounded-xl border border-primary/30 bg-card p-6 text-center">
+        <p className="text-lg text-foreground">
           See real salary data at{" "}
-          <a href="https://salary.relova.ai" className="font-semibold text-[#38BDF8] hover:underline">
+          <a href="https://salary.relova.ai" className="font-semibold text-primary hover:underline">
             salary.relova.ai →
           </a>
         </p>

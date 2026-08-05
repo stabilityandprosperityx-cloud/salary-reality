@@ -48,12 +48,12 @@ export function SubmitForm() {
 
   return (
     <form onSubmit={onSubmit} className="glass mx-auto grid max-w-3xl gap-4 p-6">
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Country
         <select
           name="country"
           required
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           defaultValue=""
         >
           <option value="" disabled>
@@ -67,12 +67,12 @@ export function SubmitForm() {
         </select>
       </label>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Profession Category
         <select
           name="professionCategory"
           required
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           defaultValue=""
         >
           <option value="" disabled>
@@ -86,35 +86,35 @@ export function SubmitForm() {
         </select>
       </label>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Specific Job Title
         <input
           type="text"
           name="jobTitle"
           maxLength={60}
           required
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           placeholder="e.g. Backend Engineer"
         />
       </label>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Monthly Salary in USD
         <input
           type="number"
           name="monthlySalaryUsd"
           min={1}
           required
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           placeholder="e.g. 4500"
         />
       </label>
 
-      <fieldset className="rounded-md border border-white/10 p-3">
-        <legend className="px-1 text-sm text-white/80">Is this gross or net salary?</legend>
+      <fieldset className="rounded-md border border-border p-3">
+        <legend className="px-1 text-sm text-muted-foreground">Is this gross or net salary?</legend>
         <div className="mt-2 flex flex-wrap gap-4">
           {SALARY_TYPES.map((type) => (
-            <label key={type} className="flex items-center gap-2 text-sm text-white/90">
+            <label key={type} className="flex items-center gap-2 text-sm text-foreground">
               <input
                 type="radio"
                 name="salaryType"
@@ -127,11 +127,11 @@ export function SubmitForm() {
         </div>
       </fieldset>
 
-      <fieldset className="rounded-md border border-white/10 p-3">
-        <legend className="px-1 text-sm text-white/80">Employment Type</legend>
+      <fieldset className="rounded-md border border-border p-3">
+        <legend className="px-1 text-sm text-muted-foreground">Employment Type</legend>
         <div className="mt-2 flex flex-wrap gap-4">
           {EMPLOYMENT_TYPES.map((type) => (
-            <label key={type} className="flex items-center gap-2 text-sm text-white/90">
+            <label key={type} className="flex items-center gap-2 text-sm text-foreground">
               <input
                 type="radio"
                 name="employmentType"
@@ -144,12 +144,12 @@ export function SubmitForm() {
         </div>
       </fieldset>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Experience Level
         <select
           name="experienceLevel"
           required
-          className="mt-1 w-full rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
           defaultValue=""
         >
           <option value="" disabled>
@@ -163,23 +163,23 @@ export function SubmitForm() {
         </select>
       </label>
 
-      <label className="text-sm text-white/80">
+      <label className="text-sm text-muted-foreground">
         Optional: Short note
         <textarea
           name="note"
           maxLength={200}
           rows={4}
-          className="mt-1 w-full resize-none rounded-md border border-white/10 bg-[#0A0A0F] px-3 py-2 text-white"
+          className="mt-1 w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-foreground"
           placeholder="Anything useful about your compensation context"
         />
       </label>
 
-      {error && <p className="text-sm text-red-300">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <button
         type="submit"
         disabled={isLoading}
-        className="rounded-md bg-[#38BDF8] px-4 py-2 font-medium text-[#0A0A0F] transition hover:bg-sky-300 disabled:opacity-70"
+        className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-70"
       >
         {isLoading ? "Submitting..." : "Submit salary"}
       </button>

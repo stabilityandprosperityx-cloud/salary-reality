@@ -25,9 +25,9 @@ type Props = {
 };
 
 const EMPLOYMENT_CHART_COLORS: Record<string, string> = {
-  Remote: "#38BDF8",
-  Local: "#22d3ee",
-  Hybrid: "#a78bfa",
+  Remote: "hsl(245 78% 62%)",
+  Local: "hsl(168 55% 40%)",
+  Hybrid: "hsl(280 70% 55%)",
 };
 
 function employmentPieBackground(items: { type: string; count: number }[]): string | null {
@@ -39,7 +39,7 @@ function employmentPieBackground(items: { type: string; count: number }[]): stri
     const start = (acc / total) * 360;
     acc += item.count;
     const end = (acc / total) * 360;
-    const color = EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b";
+    const color = EMPLOYMENT_CHART_COLORS[item.type] ?? "hsl(220 8% 52%)";
     stops.push(`${color} ${start}deg ${end}deg`);
   }
   return `conic-gradient(${stops.join(", ")})`;
@@ -90,10 +90,10 @@ export default async function Home({ searchParams }: Props) {
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
       <RefreshLoop />
       <section className="glass p-6">
-        <h1 className="text-4xl font-semibold tracking-tight text-white">Real Salaries Abroad. No Fluff.</h1>
-        <p className="mt-2 text-white/70">
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground">Real Salaries Abroad. No Fluff.</h1>
+        <p className="mt-2 text-muted-foreground">
           {stats.totalSubmissions} salaries submitted. Updated in real time.{" "}
-          <span className="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-400/20 px-2 py-0.5 text-xs text-emerald-200">
+          <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/15 px-2 py-0.5 text-xs text-primary">
             Live
           </span>
         </p>
@@ -101,21 +101,21 @@ export default async function Home({ searchParams }: Props) {
 
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Total submissions</p>
-          <p className="text-xl font-semibold text-white">{stats.totalSubmissions}</p>
+          <p className="text-sm text-muted-foreground">Total submissions</p>
+          <p className="text-xl font-semibold text-foreground">{stats.totalSubmissions}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Countries covered</p>
-          <p className="text-xl font-semibold text-white">{stats.countriesCovered}</p>
+          <p className="text-sm text-muted-foreground">Countries covered</p>
+          <p className="text-xl font-semibold text-foreground">{stats.countriesCovered}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Professions covered</p>
-          <p className="text-xl font-semibold text-white">{stats.professionsCovered}</p>
+          <p className="text-sm text-muted-foreground">Professions covered</p>
+          <p className="text-xl font-semibold text-foreground">{stats.professionsCovered}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Median gross / net</p>
-          <p className="text-sm text-white/90">Median gross: {stats.medianGrossSalary > 0 ? formatUsd(stats.medianGrossSalary) : "—"}</p>
-          <p className="text-sm text-white/90">Median net: {stats.medianNetSalary > 0 ? formatUsd(stats.medianNetSalary) : "—"}</p>
+          <p className="text-sm text-muted-foreground">Median gross / net</p>
+          <p className="text-sm text-foreground/90">Median gross: {stats.medianGrossSalary > 0 ? formatUsd(stats.medianGrossSalary) : "—"}</p>
+          <p className="text-sm text-foreground/90">Median net: {stats.medianNetSalary > 0 ? formatUsd(stats.medianNetSalary) : "—"}</p>
         </div>
       </section>
 
@@ -123,50 +123,50 @@ export default async function Home({ searchParams }: Props) {
 
       <section className="grid gap-3 md:grid-cols-3">
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Median salary</p>
-          <p className="text-3xl font-semibold text-[#38BDF8]">{formatUsd(stats.filteredMedianSalary)}</p>
+          <p className="text-sm text-muted-foreground">Median salary</p>
+          <p className="text-3xl font-semibold text-primary">{formatUsd(stats.filteredMedianSalary)}</p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Salary range</p>
-          <p className="text-2xl font-semibold text-white">
+          <p className="text-sm text-muted-foreground">Salary range</p>
+          <p className="text-2xl font-semibold text-foreground">
             {formatUsd(stats.filteredMinSalary)} - {formatUsd(stats.filteredMaxSalary)}
           </p>
         </div>
         <div className="glass p-4">
-          <p className="text-sm text-white/60">Submissions (selection)</p>
-          <p className="text-2xl font-semibold text-white">{stats.filteredCount}</p>
+          <p className="text-sm text-muted-foreground">Submissions (selection)</p>
+          <p className="text-2xl font-semibold text-foreground">{stats.filteredCount}</p>
         </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
         <div className="glass p-4">
-          <h2 className="mb-3 text-lg font-semibold text-white">Median Salary by Country</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Median Salary by Country</h2>
           <div className="space-y-2">
             {stats.topCountries.map((item) => (
               <div key={item.name}>
-                <div className="mb-1 flex justify-between text-xs text-white/70">
+                <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                   <span>{item.name}</span>
                   <span>{item.value}</span>
                 </div>
-                <div className="h-2 rounded bg-white/10">
-                  <div className="h-2 rounded bg-[#38BDF8]" style={{ width: `${(item.value / maxCountry) * 100}%` }} />
+                <div className="h-2 rounded bg-muted">
+                  <div className="h-2 rounded bg-primary" style={{ width: `${(item.value / maxCountry) * 100}%` }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div className="glass p-4">
-          <h2 className="mb-3 text-lg font-semibold text-white">Salary Distribution</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Salary Distribution</h2>
           <div className="space-y-2">
             {stats.histogram.map((item) => (
               <div key={item.label}>
-                <div className="mb-1 flex justify-between text-xs text-white/70">
+                <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                   <span>{item.label}</span>
                   <span>{item.count}</span>
                 </div>
-                <div className="h-2 rounded bg-white/10">
+                <div className="h-2 rounded bg-muted">
                   <div
-                    className="h-2 rounded bg-cyan-300"
+                    className="h-2 rounded bg-primary/70"
                     style={{ width: `${(item.count / maxHistogram) * 100}%` }}
                   />
                 </div>
@@ -175,17 +175,17 @@ export default async function Home({ searchParams }: Props) {
           </div>
         </div>
         <div className="glass p-4">
-          <h2 className="mb-3 text-lg font-semibold text-white">Salaries by Profession</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Salaries by Profession</h2>
           <div className="space-y-2">
             {stats.topProfessions.map((item) => (
               <div key={item.name}>
-                <div className="mb-1 flex justify-between text-xs text-white/70">
+                <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                   <span>{item.name}</span>
                   <span>{item.value}</span>
                 </div>
-                <div className="h-2 rounded bg-white/10">
+                <div className="h-2 rounded bg-muted">
                   <div
-                    className="h-2 rounded bg-sky-400"
+                    className="h-2 rounded bg-accent"
                     style={{ width: `${(item.value / maxProfession) * 100}%` }}
                   />
                 </div>
@@ -197,20 +197,20 @@ export default async function Home({ searchParams }: Props) {
 
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="glass p-4">
-          <h2 className="mb-3 text-lg font-semibold text-white">Median Salary by Experience Level</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Median Salary by Experience Level</h2>
           <div className="space-y-3">
             {stats.medianByExperience.map((row) => (
               <div key={row.fullLabel}>
-                <div className="mb-1 flex justify-between text-xs text-white/70">
+                <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                   <span title={row.fullLabel}>
                     {row.shortLabel}
-                    {row.count === 0 ? <span className="text-white/40"> (no data)</span> : null}
+                    {row.count === 0 ? <span className="text-muted-foreground/60"> (no data)</span> : null}
                   </span>
                   <span>{row.count > 0 ? formatUsd(row.median) : "—"}</span>
                 </div>
-                <div className="h-2 rounded bg-white/10">
+                <div className="h-2 rounded bg-muted">
                   <div
-                    className="h-2 rounded bg-[#38BDF8]"
+                    className="h-2 rounded bg-primary"
                     style={{
                       width: row.count > 0 ? `${(row.median / maxExpMedian) * 100}%` : "0%",
                     }}
@@ -221,13 +221,13 @@ export default async function Home({ searchParams }: Props) {
           </div>
         </div>
         <div className="glass p-4">
-          <h2 className="mb-3 text-lg font-semibold text-white">Remote vs Local vs Hybrid</h2>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">Remote vs Local vs Hybrid</h2>
           {employmentTotal === 0 ? (
-            <p className="text-sm text-white/60">No submissions in this selection yet.</p>
+            <p className="text-sm text-muted-foreground">No submissions in this selection yet.</p>
           ) : (
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-center">
               <div
-                className="h-40 w-40 shrink-0 rounded-full border border-white/10 shadow-inner"
+                className="h-40 w-40 shrink-0 rounded-full border border-border shadow-inner"
                 style={{ background: employmentPie ?? undefined }}
                 role="img"
                 aria-label="Employment type distribution"
@@ -237,11 +237,11 @@ export default async function Home({ searchParams }: Props) {
                   const pct = employmentTotal > 0 ? Math.round((item.count / employmentTotal) * 100) : 0;
                   return (
                     <div key={item.type}>
-                      <div className="mb-1 flex justify-between text-xs text-white/70">
+                      <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                         <span className="flex items-center gap-2">
                           <span
                             className="inline-block h-2 w-2 rounded-full"
-                            style={{ backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b" }}
+                            style={{ backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "hsl(220 8% 52%)" }}
                           />
                           {item.type}
                         </span>
@@ -249,12 +249,12 @@ export default async function Home({ searchParams }: Props) {
                           {item.count} ({pct}%)
                         </span>
                       </div>
-                      <div className="h-2 rounded bg-white/10">
+                      <div className="h-2 rounded bg-muted">
                         <div
                           className="h-2 rounded"
                           style={{
                             width: `${(item.count / maxEmployment) * 100}%`,
-                            backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "#64748b",
+                            backgroundColor: EMPLOYMENT_CHART_COLORS[item.type] ?? "hsl(220 8% 52%)",
                           }}
                         />
                       </div>
@@ -277,10 +277,10 @@ export default async function Home({ searchParams }: Props) {
         salaryType={salaryType}
       />
 
-      <section className="glass border border-[#38BDF8]/30 p-4 text-center">
-        <p className="text-white">
+      <section className="glass border border-primary/30 p-4 text-center">
+        <p className="text-foreground">
           Planning to relocate?{" "}
-          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-[#38BDF8]">
+          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-primary">
             Get your personalized plan at Relova →
           </a>
         </p>
