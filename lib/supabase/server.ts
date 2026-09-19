@@ -75,6 +75,42 @@ export async function fetchFilteredEntryCount(
   }
 }
 
+/**
+ * Submission counts for every (country, profession) pair, in one pass.
+ * Used by app/sitemap.ts to exclude thin/empty pairs from the sitemap —
+ * cheaper than one fetchFilteredEntryCount() call per pair (2,000+ queries).
+ * Paginates the full `salary_entries` table (country, profession_category
+ * only) in chunks of 1,000 rows and tallies counts client-side.
+ */
+export async function fetchAllPairCounts(): Promise<Map<string, number>> {
+  noStore();
+  const counts = new Map<string, number>();
+  try {
+    const supabase = createServerSupabase();
+    if (!supabase) return counts;
+    const PAGE_SIZE = 1000;
+    for (let offset = 0; ; offset += PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from("salary_entries")
+        .select("country,profession_category")
+        .range(offset, offset + PAGE_SIZE - 1);
+      if (error) {
+        console.error("Supabase pair-count fetch error:", error.message);
+        break;
+      }
+      if (!data || data.length === 0) break;
+      for (const row of data) {
+        const key = `${row.country}|${row.profession_category}`;
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+      if (data.length < PAGE_SIZE) break;
+    }
+  } catch (err) {
+    console.error("Supabase pair-count fetch failed:", err);
+  }
+  return counts;
+}
+
 /** One page of entries for current filters, newest first. */
 export async function fetchFilteredEntriesPage(
   salaryType: "" | "gross" | "net",

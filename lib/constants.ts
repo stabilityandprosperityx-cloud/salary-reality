@@ -1,3 +1,16 @@
+/**
+ * Below this many real submissions, a /:country/:profession page has no
+ * substantive unique content (just an empty template) and should not be
+ * indexed or listed in the sitemap. ~1,960 country×profession URLs exist
+ * combinatorially (118 countries × 18 professions) but only a fraction have
+ * enough real data to be worth Google's attention — submitting all of them
+ * regardless of data volume is what produced ~1,900 GSC "Discovered –
+ * currently not indexed" pages in September 2026. See generateMetadata in
+ * app/[country]/[profession]/page.tsx (noindex below threshold) and
+ * app/sitemap.ts (excluded from sitemap below threshold).
+ */
+export const MIN_SUBMISSIONS_FOR_INDEX = 5;
+
 export const PROFESSION_CATEGORIES = [
   "Software Engineering",
   "Design / UX",

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { countryFlagEmoji } from "@/lib/flags";
 import { SITE_URL } from "@/lib/blog";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
+import { MIN_SUBMISSIONS_FOR_INDEX } from "@/lib/constants";
 import { COUNTRIES, PROFESSIONS, fromSlug, toSlug } from "@/lib/slugs";
 import {
   SALARY_STATS_FETCH_LIMIT,
@@ -44,11 +45,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${professionName} Salaries in ${countryName}: Real Data | Salary Reality`;
   const description = `See real anonymous ${professionName} salaries in ${countryName}. Median pay, salary range, and breakdowns by experience level and employment type.`;
   const canonical = `${SITE_URL}/${params.country}/${params.profession}`;
+  const count = await fetchFilteredEntryCount("", countryName, professionName);
+  const hasEnoughData = count >= MIN_SUBMISSIONS_FOR_INDEX;
   return {
     title,
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
+    // Thin/empty pages (below MIN_SUBMISSIONS_FOR_INDEX real submissions) stay
+    // live for users and future data — but Google shouldn't index them as if
+    // they were substantive content. See lib/constants.ts for why.
+    robots: hasEnoughData
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
   };
 }
 
