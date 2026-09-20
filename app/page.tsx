@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { FilterBar } from "@/app/components/filter-bar";
 import { RefreshLoop } from "@/app/components/refresh-loop";
 import { SalariesSection } from "@/app/components/salaries-section";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
 import { ENTRIES_PER_PAGE } from "@/lib/pagination";
+import { SITE_URL } from "@/lib/blog";
 import {
   SALARY_STATS_FETCH_LIMIT,
   fetchFilteredEntriesForStats,
@@ -14,6 +16,14 @@ import {
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+// Homepage is filterable via ?country=&profession=&salaryType=&page= query
+// params, which would otherwise be crawlable as duplicate-content URLs with
+// no canonical signal. Pin canonical to the bare "/" so all filtered
+// variants consolidate onto the root in Google's index.
+export const metadata: Metadata = {
+  alternates: { canonical: SITE_URL },
+};
 
 type Props = {
   searchParams: {

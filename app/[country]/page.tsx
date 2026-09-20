@@ -30,7 +30,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const countryName = fromSlug(params.country);
   const title = `Expat Salaries in ${countryName}: Real Data by Profession | Salary Reality`;
-  const description = `Browse real anonymous salary data for expats and remote workers in ${countryName}. See median salaries by profession, experience level, and employment type.`;
+  const description = `Real, anonymous salary data for expats in ${countryName}: median pay by profession, experience level, and employment type.`;
   const canonical = `${SITE_URL}/${params.country}`;
   return {
     title,

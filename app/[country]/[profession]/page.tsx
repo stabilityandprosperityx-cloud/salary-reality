@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const countryName = fromSlug(params.country);
   const professionName = resolveProfessionFromSlug(params.profession);
   const title = `${professionName} Salaries in ${countryName}: Real Data | Salary Reality`;
-  const description = `See real anonymous ${professionName} salaries in ${countryName}. Median pay, salary range, and breakdowns by experience level and employment type.`;
+  const description = `Real, anonymous ${professionName} salaries in ${countryName}: median pay, range, and breakdowns by experience and employment type.`;
   const canonical = `${SITE_URL}/${params.country}/${params.profession}`;
   const count = await fetchFilteredEntryCount("", countryName, professionName);
   const hasEnoughData = count >= MIN_SUBMISSIONS_FOR_INDEX;
