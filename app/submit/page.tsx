@@ -7,11 +7,19 @@ export const metadata: Metadata = {
   description:
     "Submit your real salary anonymously by country and profession. Help build a crowdsourced, honest picture of what people actually earn abroad.",
   alternates: { canonical: `${SITE_URL}/submit` },
+  // openGraph merging with the root layout is shallow (replaces the whole
+  // object), so images has to be restated here or this page loses the
+  // default og:image set on app/layout.tsx.
   openGraph: {
     title: "Share Your Salary Anonymously | Salary Reality",
     description:
       "Submit your real salary anonymously by country and profession. Help build a crowdsourced, honest picture of what people actually earn abroad.",
     url: `${SITE_URL}/submit`,
+    images: [{ url: `${SITE_URL}/og/og-default.jpg`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [`${SITE_URL}/og/og-default.jpg`],
   },
 };
 

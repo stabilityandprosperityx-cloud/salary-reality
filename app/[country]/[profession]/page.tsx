@@ -51,7 +51,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    // openGraph merging with the root layout is shallow (replaces the whole
+    // object), so images has to be restated here or these pages lose the
+    // default og:image set on app/layout.tsx.
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      images: [{ url: `${SITE_URL}/og/og-default.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image", images: [`${SITE_URL}/og/og-default.jpg`] },
     // Thin/empty pages (below MIN_SUBMISSIONS_FOR_INDEX real submissions) stay
     // live for users and future data — but Google shouldn't index them as if
     // they were substantive content. See lib/constants.ts for why.

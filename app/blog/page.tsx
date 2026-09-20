@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   description:
     "In-depth salary guides for expats, remote workers, and tech professionals—gross vs net, country comparisons, and real relocation numbers.",
   alternates: { canonical: `${SITE_URL}/blog` },
+  // openGraph merging with the root layout is shallow (a child's openGraph
+  // object replaces the parent's entirely, doesn't merge individual keys),
+  // so images has to be restated here or this page loses the default
+  // og:image set on app/layout.tsx.
   openGraph: {
     title: "Blog | Salary Reality",
     description:
@@ -15,6 +19,11 @@ export const metadata: Metadata = {
     siteName: "Salary Reality",
     type: "website",
     locale: "en_US",
+    images: [{ url: `${SITE_URL}/og/og-default.jpg`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [`${SITE_URL}/og/og-default.jpg`],
   },
 };
 
