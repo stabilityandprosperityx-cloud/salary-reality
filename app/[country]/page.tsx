@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { countryFlagEmoji } from "@/lib/flags";
 import { SITE_URL } from "@/lib/blog";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
+import { relovaCountrySlug } from "@/lib/relova-countries";
 import { COUNTRIES, PROFESSIONS, fromSlug, toSlug } from "@/lib/slugs";
 import {
   SALARY_STATS_FETCH_LIMIT,
@@ -51,6 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CountryPage({ params }: Props) {
   const countryName = fromSlug(params.country);
+  const relovaSlug = relovaCountrySlug(countryName);
   const [count, entries, latest] = await Promise.all([
     fetchFilteredEntryCount("", countryName, ""),
     fetchFilteredEntriesForStats("", countryName, "", SALARY_STATS_FETCH_LIMIT),
@@ -205,9 +207,14 @@ export default async function CountryPage({ params }: Props) {
 
       <section className="glass border border-primary/30 p-4 text-center">
         <p className="text-foreground">
-          Planning to relocate?{" "}
-          <a href="https://relova.ai" target="_blank" rel="noreferrer" className="font-semibold text-primary">
-            Get your personalized plan at Relova →
+          Planning to relocate to {countryName}?{" "}
+          <a
+            href={relovaSlug ? `https://relova.ai/countries/${relovaSlug}` : "https://relova.ai"}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-primary"
+          >
+            {relovaSlug ? `See the full ${countryName} relocation guide →` : "Get your personalized plan at Relova →"}
           </a>
         </p>
       </section>
