@@ -69,6 +69,24 @@ export default async function CountryPage({ params }: Props) {
           }),
         }}
       />
+      {count > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Dataset",
+              name: `Expat salaries in ${countryName}`,
+              description: `Crowdsourced, anonymously submitted salary data for expats and remote workers in ${countryName}, broken down by profession, experience level, and employment type.`,
+              url: `${SITE_URL}/${params.country}`,
+              creator: { "@type": "Organization", name: "Salary Reality", url: SITE_URL },
+              variableMeasured: "Annual salary (USD)",
+              measurementTechnique: "Anonymous self-reported crowdsourced submissions",
+              temporalCoverage: new Date().getFullYear().toString(),
+            }),
+          }}
+        />
+      )}
       <Link href="/" className="text-sm text-primary hover:text-primary/80">
         ← All countries
       </Link>

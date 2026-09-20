@@ -98,6 +98,24 @@ export default async function CountryProfessionPage({ params }: Props) {
           }),
         }}
       />
+      {count > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Dataset",
+              name: `${professionName} salaries in ${countryName}`,
+              description: `Crowdsourced, anonymously submitted ${professionName} salary data for ${countryName}: median, range, and breakdowns by experience level and employment type.`,
+              url: `${SITE_URL}/${params.country}/${params.profession}`,
+              creator: { "@type": "Organization", name: "Salary Reality", url: SITE_URL },
+              variableMeasured: "Annual salary (USD)",
+              measurementTechnique: "Anonymous self-reported crowdsourced submissions",
+              temporalCoverage: new Date().getFullYear().toString(),
+            }),
+          }}
+        />
+      )}
       <div className="flex flex-wrap gap-4 text-sm">
         <Link href="/" className="text-primary hover:text-primary/80">
           ← All countries
