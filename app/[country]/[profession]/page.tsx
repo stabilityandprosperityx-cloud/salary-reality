@@ -79,6 +79,25 @@ export default async function CountryProfessionPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: countryName, item: `${SITE_URL}/${params.country}` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: professionName,
+                item: `${SITE_URL}/${params.country}/${params.profession}`,
+              },
+            ],
+          }),
+        }}
+      />
       <div className="flex flex-wrap gap-4 text-sm">
         <Link href="/" className="text-primary hover:text-primary/80">
           ← All countries

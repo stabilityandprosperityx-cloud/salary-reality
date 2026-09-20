@@ -43,6 +43,29 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600;1,9..144,700&display=swap"
           rel="stylesheet"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Salary Reality",
+              url: "https://salary.relova.ai",
+              parentOrganization: { "@type": "Organization", name: "Relova", url: "https://relova.ai" },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Salary Reality",
+              url: "https://salary.relova.ai",
+            }),
+          }}
+        />
       </head>
       <body>
         <ThemeProvider>

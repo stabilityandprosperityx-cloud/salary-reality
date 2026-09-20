@@ -56,6 +56,19 @@ export default async function CountryPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: countryName, item: `${SITE_URL}/${params.country}` },
+            ],
+          }),
+        }}
+      />
       <Link href="/" className="text-sm text-primary hover:text-primary/80">
         ← All countries
       </Link>
