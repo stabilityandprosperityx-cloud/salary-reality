@@ -71,9 +71,20 @@ export default async function RootLayout({
         <ThemeProvider>
           <header className="border-b border-border bg-card/80 backdrop-blur">
             <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
-              <Link href="/" className="font-serif text-xl font-semibold tracking-tight text-foreground">
-                Salary Reality <span className="font-sans text-sm font-normal text-muted-foreground">by Relova</span>
-              </Link>
+              <span className="font-serif text-xl font-semibold tracking-tight text-foreground">
+                <Link href="/">Salary Reality</Link>{" "}
+                <span className="font-sans text-sm font-normal text-muted-foreground">
+                  by{" "}
+                  <a
+                    href="https://relova.ai"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-primary hover:underline"
+                  >
+                    Relova
+                  </a>
+                </span>
+              </span>
               <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                 <Link href="/blog" className="text-sm font-medium text-muted-foreground transition hover:text-primary">
                   Blog
