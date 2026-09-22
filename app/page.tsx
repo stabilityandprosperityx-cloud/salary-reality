@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { FilterBar } from "@/app/components/filter-bar";
 import { RefreshLoop } from "@/app/components/refresh-loop";
 import { SalariesSection } from "@/app/components/salaries-section";
 import { formatUsd, makeDashboardData } from "@/lib/salary";
 import { ENTRIES_PER_PAGE } from "@/lib/pagination";
 import { SITE_URL } from "@/lib/blog";
+import { COUNTRIES, toSlug } from "@/lib/slugs";
 import {
   SALARY_STATS_FETCH_LIMIT,
   fetchFilteredEntriesForStats,
@@ -286,6 +288,25 @@ export default async function Home({ searchParams }: Props) {
         profession={profession}
         salaryType={salaryType}
       />
+
+      <section className="glass p-4">
+        <h2 className="mb-3 text-lg font-semibold text-foreground">Browse salaries by country</h2>
+        <p className="mb-3 text-sm text-muted-foreground">
+          {COUNTRIES.length} countries covered. Each page breaks down real, anonymously submitted salaries by
+          profession.
+        </p>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3 lg:grid-cols-4">
+          {COUNTRIES.map((c) => (
+            <Link
+              key={c}
+              href={`/${toSlug(c)}`}
+              className="truncate text-sm text-muted-foreground transition hover:text-primary"
+            >
+              {c}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="glass border border-primary/30 p-4 text-center">
         <p className="text-foreground">
